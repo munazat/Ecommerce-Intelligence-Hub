@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+
+# uv
+.python-version.local
+
+# Data layers (raw/bronze/silver/gold are gitignored per roadmap; sample data is kept)
+data/raw/*
+data/bronze/*
+data/silver/*
+data/gold/*
+!data/raw/.gitkeep
+!data/bronze/.gitkeep
+!data/silver/.gitkeep
+!data/gold/.gitkeep
+
+# MLflow / experiment tracking
+mlruns/
+mlartifacts/
+
+# Reports (generated PDFs; sample ones committed explicitly)
+reports/*.pdf
+
+# Env / secrets
+.env
+.env.*
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
