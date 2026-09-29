@@ -2,7 +2,7 @@
 
 End-to-end customer analytics platform: ingests raw e-commerce transaction data, validates and models it through a layered warehouse, predicts customer lifetime value and churn with probabilistic and ML models, forecasts revenue with backtested time-series models, and turns predictions into dollar-optimized retention decisions — served via an API, a dashboard, and auto-generated reports.
 
-**Status:** early build-out, following the phased roadmap in [`ecommerce_intelligence_hub_roadmap.md`](ecommerce_intelligence_hub_roadmap.md).
+**Status:** early build-out. The foundation phase is in place — project tooling, continuous integration, the package skeleton, the case study brief and metrics dictionary, and a reproducible dataset download script.
 
 ## Quick start
 

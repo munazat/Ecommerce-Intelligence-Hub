@@ -46,7 +46,7 @@ would act on:
 
 - **Retention targeting:** the expected-profit optimizer must beat a naive "target
   everyone above a 0.5 churn-probability threshold" policy on expected profit, at the
-  same budget. See [Phase 14](../ecommerce_intelligence_hub_roadmap.md) (decision layer).
+  same budget. See Phase 7 (decision layer).
 - **CLV / churn models:** must beat the BG/NBD probabilistic baseline and a naive
   recency rule on the agreed metrics (top-decile lift, calibration, MAE/RMSE) — or the
   write-up says plainly that they didn't, and why the simpler model is recommended
@@ -75,7 +75,7 @@ would act on:
 - **Not a causal claim from observational data alone.** Churn-probability targeting
   identifies *who is likely to lapse*, not *who contacting would save* — that requires an
   uplift/experimental framing, which is treated explicitly as a separate, harder problem
-  in the decision layer (Phase 14), not smuggled in as a side effect of the churn model.
+  in the decision layer (Phase 7), not smuggled in as a side effect of the churn model.
 - **Not claiming synthetic data is real.** Any simulated data (marketing layer, campaign
   response rates used in the profit optimizer) is labeled as an assumption or simulation
   everywhere it's used — in code, in docs, and in the dashboard.
@@ -83,7 +83,7 @@ would act on:
 ## Open questions to revisit
 
 - Exact churn window (30/60/90 days) — to be set from the empirical inter-purchase time
-  distribution in Phase 6 (metrics/EDA), not assumed up front. Placeholder default: 90
+  distribution in Phase 3 (metrics/EDA), not assumed up front. Placeholder default: 90
   days, matching the horizon in the business questions above.
 - Whether the synthetic marketing layer stretch goal is worth the time vs. spending that
   time deepening the core CLV/churn/forecast/decision chain. Default bias: skip it unless
