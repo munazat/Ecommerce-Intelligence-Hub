@@ -6,7 +6,10 @@ authors = [
     { name = "Munaza Tariq", email = "munaxa.tm@gmail.com" }
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "kaggle>=2.2.4",
+    "requests>=2.34.2",
+]
 
 [tool.uv.build-backend]
 module-name = "hub"
