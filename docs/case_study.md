@@ -64,7 +64,7 @@ would act on:
 | Dataset | Role | Why |
 |---|---|---|
 | Online Retail II (UK gift retailer, ~1.07M rows, Dec 2009–Dec 2011) | Primary — all CLV, churn, segmentation, forecasting, decision-layer work | Real repeat-purchase behavior; a genuine non-contractual retention problem |
-| Olist (Brazilian marketplace, ~100k orders, 9 tables) | Secondary — delivery time, review score, and operations analysis only | ~97% of Olist customers buy exactly once, so it cannot support CLV/retention/cohort work; using it there would produce a meaningless output (see the project roadmap's Reality Check section) |
+| Olist (Brazilian marketplace, ~100k orders, 9 tables) | Secondary — delivery time, review score, and operations analysis only | ~97% of Olist customers buy exactly once, so cohort/retention/CLV analysis on it would be meaningless (nothing to retain) — it's used only where single-purchase behavior doesn't matter: delivery time vs. review score, operations analysis |
 | Synthetic marketing/traffic layer (optional, stretch) | If added: clearly labeled as synthetic, used only to demonstrate conversion-rate / funnel reasoning | Neither real dataset has sessions, traffic sources, or channels — conversion rate cannot be computed from them as-is, and it will never be presented as if it were real |
 
 ## Explicit non-goals

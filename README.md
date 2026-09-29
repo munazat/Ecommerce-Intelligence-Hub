@@ -16,4 +16,4 @@ uv run ruff format .   # format
 uv run pre-commit run --all-files   # run all pre-commit hooks
 ```
 
-Full README (architecture, results, quick start with real data, model comparison) will be written once the platform has something to show — see the roadmap for the plan.
+Full README (architecture, results, quick start with real data, model comparison) will be written once the platform has something to show.
