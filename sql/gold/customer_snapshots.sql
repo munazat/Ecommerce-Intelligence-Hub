@@ -85,8 +85,11 @@ features AS (
                  THEN revenue ELSE 0 END)                  AS gross_revenue,
         SUM(CASE WHEN is_cancellation THEN 1 ELSE 0 END)   AS cancellation_line_count,
         -- "Active before" needs its own definition, otherwise a customer who lapsed two
-        -- years ago is scored as a fresh churn risk. Restricted to the same horizon.
-        bool_or(invoice_date >= CAST(
+        -- years ago is scored as a fresh churn risk. Restricted to the same horizon, and
+        -- to real purchases: a refund in the window is not activity (see the metric
+        -- dictionary's purchase-occasion definition).
+        bool_or(NOT is_cancellation AND NOT is_adjustment
+                AND invoice_date >= CAST(
             snapshot_date - (label_horizon_days * INTERVAL 1 DAY) AS TIMESTAMP
         ))                                                 AS was_active_in_prior_window
     FROM history
