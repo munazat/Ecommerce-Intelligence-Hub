@@ -2,7 +2,9 @@
 
 End-to-end customer analytics platform: ingests raw e-commerce transaction data, validates and models it through a layered warehouse, predicts customer lifetime value and churn with probabilistic and ML models, forecasts revenue with backtested time-series models, and turns predictions into dollar-optimized retention decisions — served via an API, a dashboard, and auto-generated reports.
 
-**Status:** the data engineering layer is complete for the primary dataset — reproducible download, bronze, silver with enforced data contracts, a SQL/DuckDB gold warehouse, and a point-in-time feature store built specifically so no downstream model can leak. Segmentation, CLV/churn modelling, forecasting, the decision layer, the API and the dashboard are not started.
+**Status:** the data engineering and analysis layers are complete for the primary dataset — reproducible download, bronze, silver with enforced data contracts, a SQL/DuckDB gold warehouse, a point-in-time feature store built specifically so no downstream model can leak, and a tested metrics/EDA layer covering revenue, retention, churn, cohorts, seasonality, product concentration and market baskets. Segmentation, CLV/churn modelling, forecasting, the decision layer, the API and the dashboard are not started.
+
+Phase 3 results are summarised in [`docs/key_findings.md`](docs/key_findings.md) and explored in three executed notebooks under [`notebooks/`](notebooks/).
 
 ## Quick start
 
@@ -56,5 +58,25 @@ The reasoning behind each layer lives next to the code that implements it, becau
 - `src/hub/ingestion/silver.py` — nine numbered cleaning decisions with measured row-count and revenue impact, including why cancellations and bad-debt adjustments are flagged rather than dropped, and why wholesale quantities are flagged instead of winsorized.
 - `sql/gold/*.sql` — one header comment per model recording the grain and the data quirks that forced it, such as the 83 invoices whose line timestamps drift by up to nine minutes, and the 13 customers who ship to more than one country.
 - `docs/case_study.md`, `docs/metrics_dictionary.md` — the stakeholder, the three business questions, and every metric defined before it is computed.
+
+## Reproducing the analysis
+
+```
+uv run python -m hub.analytics.report   # analysis.json, tables and figures (~30s)
+uv run pytest -q                        # 74 tests
+```
+
+`hub.analytics.report` is the single source of truth for the Phase 3 numbers. The
+notebooks load its tables instead of re-deriving them, so the narrative cannot drift
+from the data. It writes `reports/analysis.json`, regenerable tables under
+`reports/tables/`, and 12 figures under `reports/figures/`.
+
+| Notebook | Focus |
+|---|---|
+| [`01_business_overview.ipynb`](notebooks/01_business_overview.ipynb) | revenue, order value, seasonality, trading hours, customer concentration |
+| [`02_customer_retention.ipynb`](notebooks/02_customer_retention.ipynb) | purchase intervals, churn definition and sensitivity, cohort retention and value |
+| [`03_product_and_baskets.ipynb`](notebooks/03_product_and_baskets.ipynb) | product concentration, returns, market-basket association rules |
+
+The quantified one-page summary is [`docs/key_findings.md`](docs/key_findings.md).
 
 Full README (architecture, headline results, model comparison, honest limitations) will be written once the platform has something to show.
