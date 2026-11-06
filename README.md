@@ -2,9 +2,9 @@
 
 End-to-end customer analytics platform: ingests raw e-commerce transaction data, validates and models it through a layered warehouse, predicts customer lifetime value and churn with probabilistic and ML models, forecasts revenue with backtested time-series models, and turns predictions into dollar-optimized retention decisions — served via an API, a dashboard, and auto-generated reports.
 
-**Status:** the data engineering and analysis layers are complete for the primary dataset — reproducible download, bronze, silver with enforced data contracts, a SQL/DuckDB gold warehouse, a point-in-time feature store built specifically so no downstream model can leak, and a tested metrics/EDA layer covering revenue, retention, churn, cohorts, seasonality, product concentration and market baskets. Segmentation, CLV/churn modelling, forecasting, the decision layer, the API and the dashboard are not started.
+**Status:** the data engineering and analysis layers are complete for the primary dataset — reproducible download, bronze, silver with enforced data contracts, a SQL/DuckDB gold warehouse, a point-in-time feature store built specifically so no downstream model can leak, a tested metrics/EDA layer covering revenue, retention, churn, cohorts, seasonality, product concentration and market baskets, and customer segmentation with a stability-tested, profiled and costed segment strategy. CLV/churn modelling, forecasting, the decision layer, the API and the dashboard are not started.
 
-Phase 3 results are summarised in [`docs/key_findings.md`](docs/key_findings.md) and explored in three executed notebooks under [`notebooks/`](notebooks/).
+Phase 3 and Phase 4 results are summarised in [`docs/key_findings.md`](docs/key_findings.md) and explored in four executed notebooks under [`notebooks/`](notebooks/).
 
 ## Quick start
 
@@ -62,20 +62,23 @@ The reasoning behind each layer lives next to the code that implements it, becau
 ## Reproducing the analysis
 
 ```
-uv run python -m hub.analytics.report   # analysis.json, tables and figures (~30s)
-uv run pytest -q                        # 74 tests
+uv run python -m hub.analytics.report          # analysis.json, tables and figures (~30s)
+uv run python -m hub.analytics.segment_report  # segments.json, segment tables and figures (~70s)
+uv run pytest -q                               # 90 tests
 ```
 
-`hub.analytics.report` is the single source of truth for the Phase 3 numbers. The
-notebooks load its tables instead of re-deriving them, so the narrative cannot drift
-from the data. It writes `reports/analysis.json`, regenerable tables under
-`reports/tables/`, and 12 figures under `reports/figures/`.
+`hub.analytics.report` is the single source of truth for the Phase 3 numbers, and
+`hub.analytics.segment_report` for Phase 4. The notebooks load their tables instead of
+re-deriving them, so the narrative cannot drift from the data. They write
+`reports/analysis.json` and `reports/segments.json`, regenerable tables under
+`reports/tables/`, and 19 figures under `reports/figures/`.
 
 | Notebook | Focus |
 |---|---|
 | [`01_business_overview.ipynb`](notebooks/01_business_overview.ipynb) | revenue, order value, seasonality, trading hours, customer concentration |
 | [`02_customer_retention.ipynb`](notebooks/02_customer_retention.ipynb) | purchase intervals, churn definition and sensitivity, cohort retention and value |
 | [`03_product_and_baskets.ipynb`](notebooks/03_product_and_baskets.ipynb) | product concentration, returns, market-basket association rules |
+| [`04_customer_segmentation.ipynb`](notebooks/04_customer_segmentation.ipynb) | RFM features, K-Means/GMM/hierarchical comparison, stability, profiles and strategy |
 
 The quantified one-page summary is [`docs/key_findings.md`](docs/key_findings.md).
 
