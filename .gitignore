@@ -29,6 +29,10 @@ mlartifacts/
 # Reports (generated PDFs; sample ones committed explicitly)
 reports/*.pdf
 
+# Generated analysis tables are rebuilt by `python -m hub.analytics.report`.
+# analysis.json and figures are committed as evidence.
+reports/tables/
+
 # Env / secrets
 .env
 .env.*
