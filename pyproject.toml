@@ -15,6 +15,7 @@ dependencies = [
     "pandera>=0.33.1",
     "pyarrow>=25.0.1",
     "requests>=2.34.2",
+    "scikit-learn>=1.9.1",
     "statsmodels>=0.15.0",
 ]
 
