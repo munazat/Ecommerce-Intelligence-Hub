@@ -304,6 +304,77 @@ merchandising plan.
 
 ---
 
+## Segmentation metrics
+
+### Segmentation population and clock
+A customer enters a segmentation only once, at a single **as-of snapshot** from
+`customer_snapshots` — the latest snapshot whose 90-day label window is fully observed
+unless another date is stated. Every feature is history-only and every label is
+future-only by construction of that table.
+
+Only customers with `frequency > 0` (at least one non-reversal purchase invoice) enter.
+Refund-only accounts are excluded because their frequency, monetary value and product
+diversity are all zero: they are a service population, not a value segment. The excluded
+count is reported with every run.
+
+### RFM features
+`R = recency_days`, `F = frequency` (non-reversal purchase invoices), `M = gross_revenue`
+(lifetime to the snapshot). Gross is used rather than net so `log1p` is defined and value
+is not confounded with refunds; the refund signal is carried separately by
+`return_rate = cancellation_line_count / line_count`.
+
+Extras: `tenure_days`, `avg_days_between_orders`, `return_rate`, `distinct_products`.
+For a customer with one invoice there is no observed interval; the value is imputed with
+`tenure_days` and flagged per customer as `inter_purchase_imputed = TRUE`.
+
+Preprocessing is `log1p` on every feature except the bounded return rate, then
+`StandardScaler`. Box-Cox is not used because several features contain exact zeros.
+
+### Segment churn
+The project churn definition applies **only to customers active at the snapshot**
+(`was_active_in_prior_window = TRUE`). A segment's churn rate is therefore
+`churned active customers / active customers in the segment`, and is **undefined (NaN)**
+when a segment contains no active customers. Reporting a pooled churn rate over active
+and lapsed customers would relabel already-lapsed accounts as newly churned.
+
+### Cluster quality
+- **Silhouette** — mean `(b − a) / max(a, b)` over all points, where `a` is the mean
+  distance to the point's own cluster and `b` the mean distance to the nearest other
+  cluster. Range [-1, 1]; higher is better. Primary selection statistic.
+- **Davies-Bouldin** — average ratio of within-cluster scatter to between-cluster
+  separation; lower is better. Corroborates silhouette.
+- **Calinski-Harabasz** — between-cluster to within-cluster dispersion ratio; higher is
+  better. Reported but not used to choose k, because it rises mechanically with the number
+  of points.
+- **Minimum cluster share** — size of the smallest cluster / all customers. Solutions with
+  a cluster below 2% are rejected as unstaffable, regardless of their silhouette.
+
+### Stability (bootstrap ARI)
+The chosen model is refitted on bootstrap samples and its labels are compared with the
+full-fit labels by **Adjusted Rand Index** (ARI): 1 means identical partitions, 0 means
+chance agreement. Resampled indices are de-duplicated so the procedure applies equally to
+algorithms without an out-of-sample `predict` (Ward). Mean, median, 10th percentile and
+worst case are reported; a model with refits below ARI 0.5 is described as unstable rather
+than shipped quietly.
+
+### Rule-based RFM score
+Quintile scores over the segmentation population: `R` is reversed (lower recency is
+better), `F` and `M` are not. Each score is 1–5, `rfm_score = R + F + M` (range 3–15), and
+a rule mapping assigns a named segment (Champions, Loyal, New / promising, At risk,
+At risk — high value, Hibernating, Occasional, Core). Ties are broken by row rank so the
+quintiles are always balanced. This is the baseline the clustering must justify itself
+against, compared by ARI and by the spread of realised churn across segments.
+
+### Illustrative incremental revenue (segmentation)
+`segment future revenue × assumed uplift`, where future revenue is the **realised** 90-day
+revenue after the snapshot and the uplift is an explicit, stated assumption. Campaign cost
+is `customers × assumed cost per customer`. This is a prioritisation aid, **not** a causal
+estimate or a forecast; Phase 7 replaces it with expected-value targeting and an
+experiment design. No uplift is claimed for the returns-heavy segment until the refund
+pattern is explained.
+
+---
+
 ## Model evaluation metrics
 
 ### Classification (churn)
@@ -373,3 +444,11 @@ to prevent.
   lines. Previously a customer whose only recent invoice was a refund was scored as
   active, biasing the churn rate upward at the eligibility stage; the label side already
   excluded reversals, so the two sides were inconsistent.
+- **2026-11-06** — **segmentation definitions added.** Population is the latest complete
+  snapshot, buying customers only (`frequency > 0`); `M` is lifetime gross revenue and
+  refunds are carried by `return_rate`; single-purchase cadence is imputed with tenure and
+  flagged; segment churn is reported **only among active customers** and is NaN for
+  all-lapsed segments. Cluster selection uses silhouette with a 2% minimum cluster share,
+  stability uses bootstrap ARI, and the RFM baseline uses reversed-recency quintiles.
+  The shipped k=5 is a documented business override of the silhouette-optimal k=4; the
+  comparison and the reason are recorded in `docs/segmentation.md`.
